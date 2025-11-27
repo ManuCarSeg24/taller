@@ -16,9 +16,12 @@ public class Constants
 	public static final Integer ERR_MECANICO_NOT_FOUND_CODE = 4;
 	public static final String ERR_MECANICO_NOT_FOUND = "El mecanico no fue encontrado";
 
-	public static final Integer ERR_MECANICO_ALREADY_EXISTS_CODE = 5;
+	public static final Integer ERR_MECANICO_ALREADY_EXISTS_CODE = 409;
 	public static final String ERR_MECANICO_ALREADY_EXISTS = "El mecanico ya existe";
-
+	
+	public static final Integer MECANICO_AGREGADO_CODE = 204;
+	public static final String MECANICO_AGREGADO = "Cliente creado con éxito";
+	
 	public static final Integer ERR_MECANICO_EMPTY_CODE = 6;
 	public static final String ERR_MECANICO_EMPTY = "Los datos del mecanico están vacíos o son nulos";
 
