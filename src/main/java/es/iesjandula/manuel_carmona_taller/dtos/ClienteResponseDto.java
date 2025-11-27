@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO (Data Transfer Object) que representa la información de un mecánico para
- * solicitudes (request) en la aplicación.
- * Contiene los datos básicos de un mecánico como NIF y nombre.
+ * DTO (Data Transfer Object) que representa la información de un cliente para
+ * respuestas (response) en la aplicación.
+ * Contiene los datos básicos de un cliente como NIF, nombre y teléfono.
  * Esta clase utiliza Lombok para generar automáticamente los getters, setters,
  * constructores sin argumentos y constructores con todos los argumentos.
  * 
@@ -19,15 +19,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MecanicoRequestDto
+public class ClienteResponseDto
 {
     /**
-     * NIF del mecánico.
+     * NIF del cliente.
      */
-    private String nifMecanico;
+    private String nifCliente;
 
     /**
-     * Nombre del mecánico.
+     * Nombre del cliente.
      */
-    private String nombreMecanico;
+    private String nombreCliente;
+
+    /**
+     * Teléfono de contacto del cliente.
+     */
+    private String telefono;
 }

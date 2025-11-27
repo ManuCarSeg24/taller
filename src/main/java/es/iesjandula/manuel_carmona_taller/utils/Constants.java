@@ -1,12 +1,20 @@
 package es.iesjandula.manuel_carmona_taller.utils;
 
+/**
+ * Clase que centraliza todas las constantes utilizadas en el proyecto del taller.
+ * Incluye códigos de error, mensajes de error y mensajes generales para operaciones CRUD.
+ * Facilita la gestión uniforme de mensajes y códigos de estado a lo largo de la aplicación.
+ * 
+ * @author Manuel
+ * @since 27/11/2025
+ */
 public class Constants
 {
 	/* Errores relacionados con cliente */
-	public static final Integer ERR_CLIENTE_CODE = 1;
+	public static final Integer ERR_CLIENTE_NOT_FOUND_CODE = 1;
 	public static final String ERR_CLIENTE_NOT_FOUND = "El cliente no fue encontrada";
 	
-	public static final Integer ERR_CLIENTE_ALREADY_EXISTS_CODE = 2;
+	public static final Integer ERR_CLIENTE_ALREADY_EXISTS_CODE = 409;
 	public static final String ERR_CLIENTE_ALREADY_EXISTS = "El cliente ya existe";
 	
 	public static final Integer ERR_CLIENTE_EMPTY_CODE = 3;

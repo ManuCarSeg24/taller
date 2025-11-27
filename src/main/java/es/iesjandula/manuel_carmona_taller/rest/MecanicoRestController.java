@@ -20,6 +20,15 @@ import es.iesjandula.manuel_carmona_taller.utils.Constants;
 import es.iesjandula.manuel_carmona_taller.utils.TallerException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Controlador REST para gestionar las operaciones relacionadas con la entidad Mecanico.
+ * Proporciona endpoints para crear, modificar, borrar y obtener mecánicos.
+ * Se integra con IMecanicoRepository para acceder a la base de datos.
+ * Maneja excepciones específicas mediante TallerException y loguea información relevante.
+ * 
+ * @author Manuel
+ * @since 27/11/2025
+ */
 @Slf4j
 @RestController
 @RequestMapping("/taller/mecanico")
@@ -28,6 +37,13 @@ public class MecanicoRestController
 	@Autowired
 	private IMecanicoRepository mecanicoRepository;
 	
+	/**
+     * Crea un nuevo mecánico en la base de datos.
+     * Valida que el NIF no sea nulo ni existente previamente.
+     * 
+     * @param mecanicoRequestDto Objeto DTO con los datos del mecánico a crear.
+     * @return ResponseEntity indicando el resultado de la operación.
+     */
 	@PostMapping(value = "/", consumes = "application/json")
 	public ResponseEntity<?> crearMecanicio(@RequestBody MecanicoRequestDto mecanicoRequestDto) 
 	{
@@ -60,14 +76,21 @@ public class MecanicoRestController
         }
         catch (Exception exception)
         {
-            log.error("Error al crear usuario: " + exception.getMessage());
+            log.error("Error al crear mecanico: " + exception.getMessage());
             
-            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al guardar el usuario.");
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al guardar el mecanico.");
             		
             return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
         }
 	}
 	
+	/**
+     * Modifica un mecánico existente en la base de datos.
+     * Valida que el mecánico exista y que el NIF no sea nulo.
+     * 
+     * @param mecanicoRequestDto Objeto DTO con los datos del mecánico a modificar.
+     * @return ResponseEntity indicando el resultado de la operación.
+     */
 	@PutMapping(value = "/", consumes = "application/json")
     public ResponseEntity<?> modificarMecanico(@RequestBody MecanicoRequestDto mecanicoRequestDto)
     {
@@ -102,6 +125,13 @@ public class MecanicoRestController
         }
     }
 	
+	/**
+     * Borra un mecánico de la base de datos dado su NIF.
+     * Valida que el mecánico exista antes de eliminarlo.
+     * 
+     * @param nifMecanico NIF del mecánico a borrar.
+     * @return ResponseEntity indicando el resultado de la operación.
+     */
 	@DeleteMapping(value = "/{nifMecanico}")
     public ResponseEntity<?> borrarMecanico(@PathVariable("nifMecanico") String nifMecanico)
     {
@@ -124,8 +154,13 @@ public class MecanicoRestController
         }
     }
 
+	/**
+     * Obtiene todos los mecánicos de la base de datos.
+     * 
+     * @return ResponseEntity con la lista de mecánicos proyectada como MecanicoResponseDto.
+     */
     @GetMapping(value = "/")
-    public ResponseEntity<?> obtenerUsuarios()
+    public ResponseEntity<?> obtenerMecanicos()
     {
         return ResponseEntity.status(200).body(this.mecanicoRepository.buscarMecanicos());
     }

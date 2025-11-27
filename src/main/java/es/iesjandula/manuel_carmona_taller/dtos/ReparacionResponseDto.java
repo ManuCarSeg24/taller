@@ -9,7 +9,7 @@ import lombok.Setter;
 
 /**
  * DTO (Data Transfer Object) que representa la información de una reparación para
- * solicitudes (request) en la aplicación.
+ * respuestas (response) en la aplicación.
  * Contiene los datos básicos de la reparación como NIF del mecánico, NIF del cliente,
  * fecha de la reparación, descripción del problema y coste.
  * Esta clase utiliza Lombok para generar automáticamente los getters, setters,
@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReparacionRequestDto
+public class ReparacionResponseDto
 {
     /**
      * NIF del mecánico que realiza la reparación.
