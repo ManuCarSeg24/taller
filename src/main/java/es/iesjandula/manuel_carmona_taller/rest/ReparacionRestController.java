@@ -67,30 +67,30 @@ public class ReparacionRestController
 
             if (nifMecanico == null || nifCliente == null || nifMecanico.isEmpty() || nifCliente.isEmpty())
             {
-                log.error(Constants.ERR_REPARACION_NOT_FOUND);
-                throw new TallerException(Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS_CODE, Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS_DESC);
+                log.error(Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS);
+                throw new TallerException(Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS_CODE, Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS);
             }
 
             Optional<Mecanico> mecanicoOptional = this.mecanicoRepository.findById(nifMecanico);
             if (!mecanicoOptional.isPresent())
             {
-                log.error(Constants.ERR_MECANICO_NOT_FOUND);
-                throw new TallerException(Constants.ERR_MECANICO_NOT_FOUND_CODE, Constants.ERR_MECANICO_NOT_FOUND);
+                log.error(Constants.ERR_MECANICO_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_MECANICO_NO_ENCONTRADO_CODE, Constants.ERR_MECANICO_NO_ENCONTRADO);
             }
 
             Optional<Cliente> clienteOptional = this.clienteRepository.findById(nifCliente);
             if (!clienteOptional.isPresent())
             {
-                log.error(Constants.ERR_CLIENTE_NOT_FOUND);
-                throw new TallerException(Constants.ERR_CLIENTE_NOT_FOUND_CODE, Constants.ERR_CLIENTE_NOT_FOUND);
+                log.error(Constants.ERR_CLIENTE_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_CLIENTE_NO_ENCONTRADO_CODE, Constants.ERR_CLIENTE_NO_ENCONTRADO);
             }           
 
             ReparacionId reparacionId = new ReparacionId(nifMecanico, nifCliente);
             Optional<Reparacion> reparacionOptional = this.reparacionRepository.findById(reparacionId);
             if (reparacionOptional.isPresent())
             {
-                log.error(Constants.ERR_REPARACION_NOT_AVAILABLE);
-              // TODO  throw new TallerException(Constants.ERR_REPARACION_CODE, Constants.ERR_REPARACION_NOT_AVAILABLE);
+                log.error(Constants.ERR_REPARACION_YA_REGISTRADA);
+                throw new TallerException(Constants.ERR_REPARACION_YA_REGISTRADA_CODE, Constants.ERR_REPARACION_YA_REGISTRADA);
             }
    
             Reparacion reparacion = new Reparacion();
@@ -103,17 +103,17 @@ public class ReparacionRestController
 
             this.reparacionRepository.saveAndFlush(reparacion);
             
-            log.info(Constants.ELEMENTO_AGREGADO);
+            log.info(Constants.REPARACION_AGREGADA);
             return ResponseEntity.status(204).build();
         }
         catch (TallerException exception)
         {
         	int responseCode = 406;
-        	if (exception.getCodigo() == Constants.ERR_MECANICO_NO_EXISTS_CODE)
+        	if (exception.getCodigo() == Constants.ERR_MECANICO_NO_EXISTE_CODE)
         	{
         		responseCode = 404;
         	}
-        	else if (exception.getCodigo() == Constants.ERR_CLIENTE_NO_EXISTS_CODE)
+        	else if (exception.getCodigo() == Constants.ERR_CLIENTE_NO_EXISTE_CODE)
 			{
         		responseCode = 405;
 			}
@@ -123,7 +123,7 @@ public class ReparacionRestController
         catch (Exception exception)
         {
             log.error(exception.getMessage(), exception);
-            return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NOT_FOUND, exception).getBodyExceptionMessage());
+            return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NO_ENCONTRADA, exception).getBodyExceptionMessage());
         }
     }
 	
@@ -144,22 +144,22 @@ public class ReparacionRestController
 
 	        if (nifMecanico == null || nifCliente == null)
 	        {
-	            log.error(Constants.ERR_REPARACION_NOT_FOUND);
-	              // TODOthrow new TallerException(Constants.ERR_REPARACION_CODE, Constants.ERR_REPARACION_NOT_FOUND);
+	            log.error(Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS);
+	            throw new TallerException(Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS_CODE, Constants.ERR_REPARACION_NIFS_NULOS_O_VACIOS);
 	        }
 	        
 	        Optional<Mecanico> mecanicoOptional = this.mecanicoRepository.findById(nifMecanico);
 	        if (!mecanicoOptional.isPresent())
 	        {
-	            log.error(Constants.ERR_MECANICO_NOT_FOUND);
-	            throw new TallerException(Constants.ERR_MECANICO_NOT_FOUND_CODE, Constants.ERR_MECANICO_NOT_FOUND);
+	            log.error(Constants.ERR_MECANICO_NO_ENCONTRADO);
+	            throw new TallerException(Constants.ERR_MECANICO_NO_ENCONTRADO_CODE, Constants.ERR_MECANICO_NO_ENCONTRADO);
 	        }
 
 	        Optional<Cliente> clienteOptional = this.clienteRepository.findById(nifCliente);
 	        if (!clienteOptional.isPresent())
 	        {
-	            log.error(Constants.ERR_CLIENTE_NOT_FOUND);
-	            throw new TallerException(Constants.ERR_CLIENTE_NOT_FOUND_CODE, Constants.ERR_CLIENTE_NOT_FOUND);
+	            log.error(Constants.ERR_CLIENTE_NO_ENCONTRADO);
+	            throw new TallerException(Constants.ERR_CLIENTE_NO_ENCONTRADO_CODE, Constants.ERR_CLIENTE_NO_ENCONTRADO);
 	        }
 
 	        ReparacionId reparacionId = new ReparacionId(nifMecanico, nifCliente);
@@ -167,8 +167,8 @@ public class ReparacionRestController
 
 	        if (!reparacionOptional.isPresent())
 	        {
-	            log.error(Constants.ERR_REPARACION_NOT_FOUND);
-	              // TODOthrow new TallerException(Constants.ERR_REPARACION_CODE, Constants.ERR_REPARACION_NOT_FOUND);
+	            log.error(Constants.ERROR_REPARACION_NIFS_NO_ENCONTRADOS);
+	            throw new TallerException(Constants.ERROR_REPARACION_NIFS_NO_ENCONTRADOS_CODE, Constants.ERROR_REPARACION_NIFS_NO_ENCONTRADOS);
 	        }
 
 	        Reparacion reparacion = reparacionOptional.get();
@@ -181,18 +181,28 @@ public class ReparacionRestController
 
 	        this.reparacionRepository.saveAndFlush(reparacion);
 
-	        log.info(Constants.ELEMENTO_MODIFICADO);
-	        return ResponseEntity.status(200).build();
-	    }
-	    catch (TallerException exception)
-	    {
-	        return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
-	    }
-	    catch (Exception exception)
-	    {
-	        log.error(exception.getMessage(), exception);
-	        return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NOT_FOUND, exception).getBodyExceptionMessage());
-	    }
+	        log.info(Constants.REPARACION_MODIFICADA);
+            return ResponseEntity.status(200).build();
+        }
+        catch (TallerException exception)
+        {
+        	int responseCode = 406;
+        	if (exception.getCodigo() == Constants.ERR_MECANICO_NO_EXISTE_CODE)
+        	{
+        		responseCode = 404;
+        	}
+        	else if (exception.getCodigo() == Constants.ERR_CLIENTE_NO_EXISTE_CODE)
+			{
+        		responseCode = 405;
+			}
+        	
+        	return ResponseEntity.status(responseCode).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NO_ENCONTRADA, exception).getBodyExceptionMessage());
+        }
 	}
 
 	/**
@@ -212,25 +222,35 @@ public class ReparacionRestController
 
             if (!this.reparacionRepository.existsById(reparacionId))
             {
-                log.error(Constants.ERR_REPARACION_NOT_FOUND);
-                // TODO  throw new TallerException(Constants.ERR_REPARACION_CODE, Constants.ERR_REPARACION_NOT_FOUND);
+                log.error(Constants.ERR_REPARACION_NO_ENCONTRADA);
+                throw new TallerException(Constants.ERR_REPARACION_NO_ENCONTRADA_CODE, Constants.ERR_REPARACION_NO_ENCONTRADA);
             }
 
             this.reparacionRepository.deleteById(reparacionId);
             
             
-            log.info(Constants.ELEMENTO_ELIMINADO);
+            log.info(Constants.REPARACION_ELIMINADA);
             return ResponseEntity.status(200).build();
         }
-//        catch (TallerException exception)
-//        {
-//            return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
-//        }
-        catch (Exception exception) 
+        catch (TallerException exception)
         {
-        	TallerException videoClubException = new TallerException(404,Constants.ERR_REPARACION_NOT_FOUND) ;
-        	return ResponseEntity.status(404).body(videoClubException.getBodyExceptionMessage());
-		}
+        	int responseCode = 406;
+        	if (exception.getCodigo() == Constants.ERR_MECANICO_NO_EXISTE_CODE)
+        	{
+        		responseCode = 404;
+        	}
+        	else if (exception.getCodigo() == Constants.ERR_CLIENTE_NO_EXISTE_CODE)
+			{
+        		responseCode = 405;
+			}
+        	
+        	return ResponseEntity.status(responseCode).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NO_ENCONTRADA, exception).getBodyExceptionMessage());
+        }
     }
 	
 	/**
@@ -241,6 +261,14 @@ public class ReparacionRestController
 	@GetMapping(value = "/")
     public ResponseEntity<?> obtenerReparaciones()
     {
-        return ResponseEntity.status(200).body(this.reparacionRepository.buscarReparaciones());
+		try
+		{
+			return ResponseEntity.status(200).body(this.reparacionRepository.buscarReparaciones());
+		}
+        catch (Exception exception)
+        {
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.status(500).body(new TallerException(Constants.GENERIC_CODE, Constants.ERR_REPARACION_NO_ENCONTRADA, exception).getBodyExceptionMessage());
+        }
     }
 }

@@ -51,14 +51,14 @@ public class MecanicoRestController
         {
             if (mecanicoRequestDto.getNifMecanico() == null || mecanicoRequestDto.getNifMecanico().isEmpty())
             {
-                log.error(Constants.ERR_MECANICO_EMPTY);
-                throw new TallerException(Constants.ERR_MECANICO_EMPTY_CODE, Constants.ERR_MECANICO_EMPTY);
+                log.error(Constants.ERR_MECANICO_VACIO_NULO);
+                throw new TallerException(Constants.ERR_MECANICO_VACIO_NULO_CODE, Constants.ERR_MECANICO_VACIO_NULO);
             }
 
             if (mecanicoRequestDto.getNifMecanico() != null && this.mecanicoRepository.existsById(mecanicoRequestDto.getNifMecanico()))
             {
-                log.error(Constants.ERR_MECANICO_ALREADY_EXISTS);
-                throw new TallerException(Constants.ERR_MECANICO_ALREADY_EXISTS_CODE, Constants.ERR_MECANICO_ALREADY_EXISTS);
+                log.error(Constants.ERR_MECANICO_EXISTE);
+                throw new TallerException(Constants.ERR_MECANICO_EXISTE_INTERNAL_CODE, Constants.ERR_MECANICO_EXISTE);
             }
 
             Mecanico mecanico = new Mecanico();
@@ -67,7 +67,7 @@ public class MecanicoRestController
 
             this.mecanicoRepository.saveAndFlush(mecanico);
 
-            log.info(Constants.ELEMENTO_AGREGADO);
+            log.info(Constants.MECANICO_AGREGADO);
             return ResponseEntity.status(204).build();
         }
         catch (TallerException exception)
@@ -98,15 +98,15 @@ public class MecanicoRestController
         {
             if (mecanicoRequestDto.getNifMecanico() == null)
             {
-                log.error(Constants.ERR_MECANICO_EMPTY);
-                throw new TallerException(Constants.ERR_MECANICO_NOT_FOUND_CODE, Constants.ERR_MECANICO_EMPTY);
+            	log.error(Constants.ERR_MECANICO_VACIO_NULO);
+                throw new TallerException(Constants.ERR_MECANICO_VACIO_NULO_CODE, Constants.ERR_MECANICO_VACIO_NULO);
             }
 
             Optional<Mecanico> mecanidoOptional = this.mecanicoRepository.findById(mecanicoRequestDto.getNifMecanico());
             if (!mecanidoOptional.isPresent())
             {
-                log.error(Constants.ERR_MECANICO_NOT_FOUND);
-                throw new TallerException(Constants.ERR_MECANICO_NOT_FOUND_CODE, Constants.ERR_MECANICO_NOT_FOUND);
+                log.error(Constants.ERR_MECANICO_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_MECANICO_NO_ENCONTRADO_CODE, Constants.ERR_MECANICO_NO_ENCONTRADO);
             }
 
             Mecanico mecanico = mecanidoOptional.get();
@@ -116,12 +116,20 @@ public class MecanicoRestController
 
             this.mecanicoRepository.saveAndFlush(mecanico);
 
-            log.info(Constants.ELEMENTO_MODIFICADO);
+            log.info(Constants.MECANICO_MODIFICADO);
             return ResponseEntity.status(200).build();
         }
         catch (TallerException exception)
         {
-            return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
+        	return ResponseEntity.status(409).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error("Error al modificar mecanico: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al modificar el mecanico.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
         }
     }
 	
@@ -139,18 +147,26 @@ public class MecanicoRestController
         {
             if (!this.mecanicoRepository.existsById(nifMecanico))
             {
-                log.error(Constants.ERR_MECANICO_NOT_FOUND);
-                throw new TallerException(Constants.ERR_MECANICO_NOT_FOUND_CODE, Constants.ERR_MECANICO_NOT_FOUND);
+                log.error(Constants.ERR_MECANICO_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_MECANICO_NO_ENCONTRADO_CODE, Constants.ERR_MECANICO_NO_ENCONTRADO);
             }
 
             this.mecanicoRepository.deleteById(nifMecanico);
 
-            log.info(Constants.ELEMENTO_ELIMINADO);
+            log.info(Constants.MECANICO_ELIMINADO);
             return ResponseEntity.status(200).build();
         }
         catch (TallerException exception)
         {
-            return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
+        	return ResponseEntity.status(409).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error("Error al elminar mecanico: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al eliminar el mecanico.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
         }
     }
 
@@ -162,6 +178,17 @@ public class MecanicoRestController
     @GetMapping(value = "/")
     public ResponseEntity<?> obtenerMecanicos()
     {
-        return ResponseEntity.status(200).body(this.mecanicoRepository.buscarMecanicos());
+    	try 
+    	{
+    		return ResponseEntity.status(200).body(this.mecanicoRepository.buscarMecanicos());
+    	}
+        catch (Exception exception)
+        {
+            log.error("Error al obtener la lista de mecanicos: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al obtener la lista de mecanicos.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
+        }
     }
 }

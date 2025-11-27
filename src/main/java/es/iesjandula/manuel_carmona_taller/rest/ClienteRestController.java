@@ -52,14 +52,14 @@ public class ClienteRestController
         {
             if (clinteRequestDto.getNifCliente() == null || clinteRequestDto.getNifCliente().isEmpty())
             {
-                log.error(Constants.ERR_CLIENTE_EMPTY);
-                throw new TallerException(Constants.ERR_CLIENTE_EMPTY_CODE, Constants.ERR_CLIENTE_EMPTY);
+                log.error(Constants.ERR_CLIENTE_VACIO_NULO);
+                throw new TallerException(Constants.ERR_CLIENTE_VACIO_NULO_CODE, Constants.ERR_CLIENTE_VACIO_NULO);
             }
 
             if (clinteRequestDto.getNifCliente() != null && this.clienteRepository.existsById(clinteRequestDto.getNifCliente()))
             {
-                log.error(Constants.ERR_CLIENTE_ALREADY_EXISTS);
-                throw new TallerException(Constants.ERR_CLIENTE_ALREADY_EXISTS_CODE, Constants.ERR_CLIENTE_ALREADY_EXISTS);
+                log.error(Constants.ERR_CLIENTE_EXISTE);
+                throw new TallerException(Constants.ERR_CLIENTE_EXISTE_INTERNAL_CODE, Constants.ERR_CLIENTE_EXISTE);
             }
 
             Cliente cliente = new Cliente();
@@ -69,7 +69,7 @@ public class ClienteRestController
 
             this.clienteRepository.saveAndFlush(cliente);
 
-            log.info(Constants.ELEMENTO_AGREGADO);
+            log.info(Constants.CLIENTE_AGREGADO);
             return ResponseEntity.status(204).build();
         }
         catch (TallerException exception)
@@ -100,15 +100,15 @@ public class ClienteRestController
         {
             if (clienteRequestDto.getNifCliente() == null)
             {
-                log.error(Constants.ERR_CLIENTE_EMPTY);
-                throw new TallerException(Constants.ERR_CLIENTE_NOT_FOUND_CODE, Constants.ERR_CLIENTE_EMPTY);
+                log.error(Constants.ERR_CLIENTE_VACIO_NULO);
+                throw new TallerException(Constants.ERR_CLIENTE_VACIO_NULO_CODE, Constants.ERR_CLIENTE_VACIO_NULO);
             }
 
             Optional<Cliente> clienteOptional = this.clienteRepository.findById(clienteRequestDto.getNifCliente());
             if (!clienteOptional.isPresent())
             {
-                log.error(Constants.ERR_CLIENTE_NOT_FOUND);
-                throw new TallerException(Constants.ERR_CLIENTE_NOT_FOUND_CODE, Constants.ERR_CLIENTE_NOT_FOUND);
+                log.error(Constants.ERR_CLIENTE_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_CLIENTE_NO_ENCONTRADO_CODE, Constants.ERR_CLIENTE_NO_ENCONTRADO);
             }
 
             Cliente cliente = clienteOptional.get();
@@ -122,12 +122,20 @@ public class ClienteRestController
 
             this.clienteRepository.saveAndFlush(cliente);
 
-            log.info(Constants.ELEMENTO_MODIFICADO);
+            log.info(Constants.CLIENTE_MODIFICADO);
             return ResponseEntity.status(200).build();
         }
         catch (TallerException exception)
         {
-            return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
+        	return ResponseEntity.status(409).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error("Error al modificar cliente: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al modificar el cliente.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
         }
     }
 	
@@ -145,18 +153,26 @@ public class ClienteRestController
         {
             if (!this.clienteRepository.existsById(nifCliente))
             {
-                log.error(Constants.ERR_CLIENTE_NOT_FOUND);
-                throw new TallerException(Constants.ERR_CLIENTE_NOT_FOUND_CODE, Constants.ERR_CLIENTE_NOT_FOUND);
+                log.error(Constants.ERR_CLIENTE_NO_ENCONTRADO);
+                throw new TallerException(Constants.ERR_CLIENTE_NO_ENCONTRADO_CODE, Constants.ERR_CLIENTE_NO_ENCONTRADO);
             }
 
             this.clienteRepository.deleteById(nifCliente);
 
-            log.info(Constants.ELEMENTO_ELIMINADO);
+            log.info(Constants.CLIENTE_ELIMINADO);
             return ResponseEntity.status(200).build();
         }
         catch (TallerException exception)
         {
-            return ResponseEntity.status(400).body(exception.getBodyExceptionMessage());
+        	return ResponseEntity.status(409).body(exception.getBodyExceptionMessage());
+        }
+        catch (Exception exception)
+        {
+            log.error("Error al borrar cliente: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al borrar el cliente.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
         }
     }
 	
@@ -168,6 +184,17 @@ public class ClienteRestController
 	@GetMapping(value = "/")
     public ResponseEntity<?> obtenerClientes()
     {
-        return ResponseEntity.status(200).body(this.clienteRepository.buscarClientes());
+		try
+		{
+			return ResponseEntity.status(200).body(this.clienteRepository.buscarClientes());
+		}
+		catch (Exception exception)
+        {
+            log.error("Error al obtener la lista de clientes: " + exception.getMessage());
+            
+            TallerException tallerException = new TallerException(Constants.GENERIC_CODE, "Error al obtener la lista de clientes.");
+            		
+            return ResponseEntity.status(500).body(tallerException.getBodyExceptionMessage());
+        }
     }
 }
